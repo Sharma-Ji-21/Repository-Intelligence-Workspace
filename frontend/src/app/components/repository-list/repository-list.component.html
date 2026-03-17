@@ -1,0 +1,95 @@
+<div class="repository-workspace">
+  <section class="repo-list-panel">
+    <div class="panel-heading">
+      <p class="panel-eyebrow">Repository directory</p>
+      <h2>Browse the tracked projects.</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Repository</th>
+            <th>Stars</th>
+            <th>Forks</th>
+            <th>Language</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let repository of repositories"
+            (click)="selectRepository(repository.id)"
+            [class.selected]="repository.id === selectedRepositoryId"
+          >
+            <td>{{ repository.full_name }}</td>
+            <td>{{ repository.stars }}</td>
+            <td>{{ repository.forks }}</td>
+            <td>{{ repository.language || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="repo-details">
+    <p class="panel-eyebrow">Selected repository</p>
+    <p *ngIf="loadingDetails" class="details-state">Loading repository details...</p>
+
+    <ng-container *ngIf="selectedRepository; else noSelection">
+      <section class="card">
+        <h3>Repository details</h3>
+        <p>
+          <strong>Name</strong><span>{{ selectedRepository?.full_name }}</span>
+        </p>
+        <p>
+          <strong>Stars</strong><span>{{ selectedRepository?.stars }}</span>
+        </p>
+        <p>
+          <strong>Forks</strong><span>{{ selectedRepository?.forks }}</span>
+        </p>
+        <p>
+          <strong>Language</strong><span>{{ selectedRepository?.language || '-' }}</span>
+        </p>
+      </section>
+
+      <section class="card">
+        <h3>Insights</h3>
+        <ng-container *ngIf="insight; else noInsights">
+          <p>
+            <strong>Activity score</strong><span>{{ insight?.activityScore }}</span>
+          </p>
+          <p>
+            <strong>Complexity score</strong><span>{{ insight?.complexityScore }}</span>
+          </p>
+          <p>
+            <strong>Difficulty level</strong><span>{{ insight?.difficultyLevel }}</span>
+          </p>
+        </ng-container>
+        <ng-template #noInsights>
+          <p class="details-state">No insights available.</p>
+        </ng-template>
+      </section>
+
+      <section class="card">
+        <h3>Contributors</h3>
+        <ul *ngIf="contributors.length > 0; else noContributors">
+          <li *ngFor="let contributor of contributors" class="contributor">
+            <span class="avatar"></span>
+            <span class="contributor-name">{{ contributor.username }}</span>
+            <span class="contributor-count">{{ contributor.contributions }} contributions</span>
+          </li>
+        </ul>
+        <ng-template #noContributors>
+          <p class="details-state">No contributors available.</p>
+        </ng-template>
+      </section>
+    </ng-container>
+
+    <ng-template #noSelection>
+      <div class="details-empty-state">
+        <h3>Select a repository</h3>
+        <p>Choose a repository from the table to inspect details and related insight data.</p>
+      </div>
+    </ng-template>
+  </section>
+</div>

@@ -1,0 +1,155 @@
+<div class="dashboard-page">
+  <div class="dashboard-toast" *ngIf="showToast" [ngClass]="'dashboard-toast--' + toastType">
+    <span>{{ toastMessage }}</span>
+    <button type="button" (click)="dismissToast()">×</button>
+  </div>
+
+  <section class="dashboard-hero">
+    <div class="hero-copy">
+      <p class="hero-kicker">Repository Intelligence Workspace</p>
+      <h1>Track engineering health with a cleaner, sharper command view.</h1>
+      <p class="hero-summary">
+        Add GitHub repositories, scan the portfolio at a glance, and open focused analytics for any
+        project without leaving the dashboard.
+      </p>
+    </div>
+
+    <div class="hero-highlight" *ngIf="featuredRepository as featured; else portfolioSummary">
+      <a
+        class="hero-highlight-github"
+        [href]="featured.repo_url"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Open repository on GitHub"
+        title="Open on GitHub"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path
+            d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.18-3.37-1.18-.45-1.15-1.1-1.45-1.1-1.45-.9-.62.07-.6.07-.6 1 .08 1.52 1.02 1.52 1.02.88 1.52 2.3 1.08 2.86.83.09-.64.35-1.08.63-1.32-2.22-.25-4.56-1.1-4.56-4.93 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.28.1-2.66 0 0 .84-.27 2.75 1.02A9.5 9.5 0 0 1 12 6.8c.85 0 1.7.11 2.5.33 1.9-1.29 2.74-1.02 2.74-1.02.56 1.38.21 2.41.11 2.66.64.7 1.02 1.59 1.02 2.68 0 3.84-2.34 4.67-4.57 4.92.36.31.69.93.69 1.88v2.79c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"
+          />
+        </svg>
+      </a>
+      <p class="hero-highlight-label">Most recently updated</p>
+      <h2>{{ featured.full_name }}</h2>
+      <p>{{ featured.description || 'No repository description has been provided yet.' }}</p>
+      <div class="hero-highlight-meta">
+        <span>{{ featured.language || 'Unspecified stack' }}</span>
+        <span>Updated {{ featuredRepositoryUpdatedAt | date: 'mediumDate' }}</span>
+      </div>
+    </div>
+
+    <ng-template #portfolioSummary>
+      <div class="hero-highlight hero-highlight--empty">
+        <p class="hero-highlight-label">Portfolio status</p>
+        <h2>No repositories connected yet</h2>
+        <p>Add your first repository below to start building the portfolio view.</p>
+      </div>
+    </ng-template>
+  </section>
+
+  <section class="dashboard-stats">
+    <article class="stat-card">
+      <span class="stat-label">Repositories</span>
+      <strong>{{ repositories.length }}</strong>
+      <p>Projects currently indexed for analytics.</p>
+    </article>
+
+    <article class="stat-card">
+      <span class="stat-label">Stars tracked</span>
+      <strong>{{ totalStars }}</strong>
+      <p>Total visible community interest across all repositories.</p>
+    </article>
+
+    <article class="stat-card">
+      <span class="stat-label">Forks tracked</span>
+      <strong>{{ totalForks }}</strong>
+      <p>Signals active reuse and contribution across the portfolio.</p>
+    </article>
+
+    <article class="stat-card">
+      <span class="stat-label">Languages</span>
+      <strong>{{ trackedLanguages }}</strong>
+      <p>Distinct primary languages represented in the current set.</p>
+    </article>
+  </section>
+
+  <app-add-repository (addRepository)="handleAddRepository($event)"></app-add-repository>
+
+  <section class="dashboard-chart-section">
+    <div class="section-heading">
+      <div>
+        <p class="section-kicker">Insight distribution</p>
+        <h2>Activity v/s complexity across all tracked repositories.</h2>
+      </div>
+      <p class="section-note">Each repository is shown as its own colored point</p>
+    </div>
+
+    <div
+      class="dashboard-chart-card"
+      *ngIf="!loading && !insightsLoading && hasInsightsData; else chartState"
+    >
+      <div class="dashboard-chart-wrap">
+        <canvas #portfolioScatterChart></canvas>
+        <div class="chart-placeholder" *ngIf="!portfolioChartReady">
+          <p>Preparing chart visualization...</p>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #chartState>
+      <div class="dashboard-state-card">
+        <p class="dashboard-state-eyebrow">Insights chart</p>
+        <h3>
+          {{
+            loading || insightsLoading ? 'Loading insight data' : 'No insight data available yet'
+          }}
+        </h3>
+        <p>
+          {{
+            loading
+              ? 'Fetching repository list first.'
+              : insightsLoading
+                ? 'Fetching activity and complexity scores for all repositories.'
+                : 'Insights will appear here once they have been computed for at least one repository.'
+          }}
+        </p>
+      </div>
+    </ng-template>
+  </section>
+
+  <section class="dashboard-section">
+    <div class="section-heading">
+      <div>
+        <p class="section-kicker">Repository portfolio</p>
+        <h2>Open any repository to inspect performance and contributors.</h2>
+      </div>
+      <p class="section-note">{{ repositories.length }} repositories available</p>
+    </div>
+
+    <div class="dashboard-grid-wrap" *ngIf="!loading; else loadingRepos">
+      <div class="dashboard-grid" *ngIf="repositories.length > 0; else emptyState">
+        <app-repo-card
+          *ngFor="let repo of repositories"
+          [repo]="repo"
+          (open)="openRepository($event)"
+        ></app-repo-card>
+      </div>
+    </div>
+
+    <ng-template #loadingRepos>
+      <div class="dashboard-state-card">
+        <p class="dashboard-state-eyebrow">Loading</p>
+        <h3>Fetching repository portfolio</h3>
+        <p>Repository cards will appear here once the latest data is loaded.</p>
+      </div>
+    </ng-template>
+
+    <ng-template #emptyState>
+      <div class="dashboard-state-card">
+        <p class="dashboard-state-eyebrow">Empty portfolio</p>
+        <h3>No repositories to display</h3>
+        <p>Submit a GitHub repository URL above to populate the dashboard.</p>
+      </div>
+    </ng-template>
+  </section>
+</div>

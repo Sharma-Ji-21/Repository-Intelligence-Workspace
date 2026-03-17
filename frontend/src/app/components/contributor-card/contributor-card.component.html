@@ -1,0 +1,31 @@
+<div class="contributor-card">
+  <img
+    *ngIf="contributor.avatar_url; else avatarPlaceholder"
+    class="avatar"
+    [src]="contributor.avatar_url"
+    [alt]="contributor.username"
+  />
+  <ng-template #avatarPlaceholder>
+    <span class="avatar avatar--placeholder">
+      {{ contributor.username | slice: 0 : 1 | uppercase }}
+    </span>
+  </ng-template>
+
+  <div class="contributor-content">
+    <div class="contributor-heading">
+      <a
+        *ngIf="contributor.profile_url; else usernameOnly"
+        [href]="contributor.profile_url"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {{ contributor.username }}
+      </a>
+      <ng-template #usernameOnly>
+        <span class="contributor-name">{{ contributor.username }}</span>
+      </ng-template>
+      <span class="contributor-badge">{{ contributor.contributions }} commits</span>
+    </div>
+    <p>Contributor activity recorded for this repository.</p>
+  </div>
+</div>

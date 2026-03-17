@@ -1,0 +1,125 @@
+.repo-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(250, 245, 236, 0.88));
+  box-shadow: var(--shadow);
+  padding: 22px;
+  cursor: pointer;
+}
+
+.repo-card-header,
+.repo-card-footer,
+.repo-card-stats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.repo-card-owner,
+.repo-card-stat-label,
+.repo-card-link {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.repo-card-owner,
+.repo-card-link {
+  margin: 0;
+  color: var(--accent);
+}
+
+.repo-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.repo-card-language {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(15, 118, 110, 0.1);
+  color: var(--primary-strong);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.repo-card-github-link {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(120, 53, 15, 0.18);
+  background: rgba(255, 255, 255, 0.92);
+  color: #111827;
+}
+
+.repo-card-github-link svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.repo-card-body h3 {
+  margin: 0 0 10px;
+  font-size: 1.45rem;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+}
+
+.repo-card-description {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+.repo-card-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.repo-card-stats div {
+  padding: 14px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(120, 53, 15, 0.08);
+}
+
+.repo-card-stat-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-subtle);
+}
+
+.repo-card-stats strong {
+  font-size: 1.3rem;
+  letter-spacing: -0.04em;
+}
+
+.repo-card-footer {
+  margin-top: auto;
+  padding-top: 2px;
+  font-size: 0.92rem;
+  color: var(--text-subtle);
+}
+
+@media (max-width: 640px) {
+  .repo-card {
+    padding: 18px;
+  }
+
+  .repo-card-header,
+  .repo-card-footer {
+    flex-direction: column;
+    align-items: start;
+  }
+}

@@ -1,0 +1,13 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  color: var(--text);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}

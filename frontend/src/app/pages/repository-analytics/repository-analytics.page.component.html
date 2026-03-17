@@ -1,0 +1,130 @@
+<div class="analytics-page">
+  <button class="back-button" (click)="goBack()">Back to dashboard</button>
+
+  <div class="analytics-loading" *ngIf="loading">
+    <p class="analytics-eyebrow">Loading</p>
+    <h2>Preparing repository analytics</h2>
+    <p>Insight data, chart metrics, and contributor rankings are being loaded.</p>
+  </div>
+
+  <ng-container *ngIf="!loading && repository">
+    <section class="analytics-hero">
+      <div class="analytics-hero-copy">
+        <p class="analytics-eyebrow">Repository overview</p>
+        <h1>{{ repository.full_name }}</h1>
+        <p class="analytics-summary">
+          {{ repository.description || 'No repository description is available for this project.' }}
+        </p>
+
+        <div class="analytics-meta-row">
+          <span>{{ repository.language || 'Unspecified stack' }}</span>
+          <span>Updated {{ repository.updated_at | date: 'mediumDate' }}</span>
+          <a [href]="repository.repo_url" target="_blank" rel="noopener noreferrer">
+            Open on GitHub
+          </a>
+        </div>
+      </div>
+
+      <div class="analytics-summary-card">
+        <p class="analytics-eyebrow">Snapshot</p>
+        <div class="analytics-summary-grid">
+          <div>
+            <span>Stars</span>
+            <strong>{{ repository.stars }}</strong>
+          </div>
+          <div>
+            <span>Forks</span>
+            <strong>{{ repository.forks }}</strong>
+          </div>
+          <div>
+            <span>Watchers</span>
+            <strong>{{ repository.watchers }}</strong>
+          </div>
+          <div>
+            <span>Open issues</span>
+            <strong>{{ repository.open_issues }}</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="analytics-insight-strip">
+      <article class="insight-tile">
+        <span>Activity score</span>
+        <strong>{{ insight?.activityScore ?? 'N/A' }}</strong>
+      </article>
+      <article class="insight-tile">
+        <span>Complexity score</span>
+        <strong>{{ insight?.complexityScore ?? 'N/A' }}</strong>
+      </article>
+      <article class="insight-tile">
+        <span>Difficulty level</span>
+        <strong>{{ insight?.difficultyLevel || 'Unavailable' }}</strong>
+      </article>
+      <article class="insight-tile">
+        <span>Contributors</span>
+        <strong>{{ repository.contributors_count }}</strong>
+      </article>
+    </section>
+
+    <section class="analytics-content-grid">
+      <section class="analytics-card analytics-card--chart">
+        <div class="analytics-card-heading">
+          <div>
+            <p class="analytics-eyebrow">Comparative signal</p>
+            <h3>Activity v/s  complexity</h3>
+          </div>
+          <p class="analytics-card-note">Scores are normalized on a 0 to 100 scale.</p>
+        </div>
+
+        <div class="chart-wrap" *ngIf="insight; else noInsightState">
+          <canvas #insightsChart></canvas>
+          <div class="chart-placeholder" *ngIf="!insightsChartReady">
+            <p>Preparing chart visualization...</p>
+          </div>
+        </div>
+
+        <ng-template #noInsightState>
+          <div class="analytics-empty-state">
+            <h4>Insights are not available yet</h4>
+            <p>This repository has no analytics snapshot to visualize at the moment.</p>
+          </div>
+        </ng-template>
+      </section>
+
+      <section class="analytics-card analytics-card--contributors">
+        <div class="analytics-card-heading analytics-card-heading--stacked">
+          <div>
+            <p class="analytics-eyebrow">Contributor leaderboard</p>
+            <h3>Top contributors</h3>
+          </div>
+          <p class="analytics-card-note" *ngIf="topContributor as leader">
+            Highest activity: {{ leader.username }} with {{ leader.contributions }} contributions.
+          </p>
+        </div>
+
+        <div *ngIf="contributors.length > 0; else noContributorsState">
+          <app-contributor-card
+            *ngFor="let contributor of visibleContributors"
+            [contributor]="contributor"
+          ></app-contributor-card>
+
+          <button
+            *ngIf="contributors.length > 10 || showAllContributors"
+            class="secondary-button"
+            (click)="toggleContributors()"
+          >
+            {{ showAllContributors ? 'Show top contributors' : 'See all contributors' }}
+          </button>
+        </div>
+
+        <ng-template #noContributorsState>
+          <div class="analytics-empty-state analytics-empty-state--left">
+            <h4>No contributors available</h4>
+            <p>Contributor data has not been recorded for this repository yet.</p>
+          </div>
+        </ng-template>
+      </section>
+    </section>
+  </ng-container>
+</div>

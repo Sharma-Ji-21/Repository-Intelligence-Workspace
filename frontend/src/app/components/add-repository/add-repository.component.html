@@ -1,0 +1,19 @@
+<section class="add-repository-card">
+  <div class="add-repository-copy">
+    <p class="add-repository-kicker">Connect a repository</p>
+    <h2>Bring a GitHub project into the dashboard.</h2>
+    <p>
+      Paste a public repository URL to sync stars, forks, contributors, and insight data into the
+      workspace.
+    </p>
+  </div>
+
+  <div class="add-repository-form">
+    <label class="add-repository-field">
+      <span>Repository URL</span>
+      <input type="text" [(ngModel)]="repoUrl" placeholder="https://github.com/owner/repository" />
+    </label>
+
+    <button type="button" (click)="submit()">Add repository</button>
+  </div>
+</section>

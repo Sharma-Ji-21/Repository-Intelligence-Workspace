@@ -1,0 +1,63 @@
+.contributor-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #d6d3d1;
+  object-fit: cover;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.contributor-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.contributor-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.contributor-heading a,
+.contributor-name {
+  font-weight: 800;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.contributor-badge {
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+}
+
+.contributor-card p {
+  margin: 6px 0 0;
+  color: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+  .contributor-heading {
+    flex-direction: column;
+    align-items: start;
+  }
+}

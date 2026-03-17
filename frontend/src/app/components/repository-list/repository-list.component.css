@@ -1,0 +1,133 @@
+.repository-workspace {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.95fr) minmax(0, 1.05fr);
+  gap: 24px;
+}
+
+.repo-list-panel,
+.repo-details {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  padding: 24px;
+}
+
+.panel-heading {
+  margin-bottom: 18px;
+}
+
+.panel-eyebrow {
+  margin: 0 0 10px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.panel-heading h2,
+.details-empty-state h3,
+.card h3 {
+  margin: 0;
+  letter-spacing: -0.04em;
+}
+
+.table-wrap {
+  overflow: auto;
+}
+
+.card {
+  border: 1px solid var(--border);
+  padding: 18px;
+  margin-bottom: 16px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.selected {
+  background-color: rgba(15, 118, 110, 0.08);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border-bottom: 1px solid rgba(120, 53, 15, 0.1);
+  padding: 12px 10px;
+  text-align: left;
+}
+
+thead {
+  background-color: rgba(180, 83, 9, 0.06);
+}
+
+tbody tr {
+  cursor: pointer;
+}
+
+ul {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+li {
+  margin-bottom: 10px;
+}
+
+.contributor {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(180, 83, 9, 0.24);
+  display: inline-block;
+}
+
+.contributor-name {
+  font-weight: 700;
+}
+
+.contributor-count,
+.details-state,
+.details-empty-state p,
+.card p strong {
+  color: var(--text-muted);
+}
+
+.card p {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 12px 0 0;
+}
+
+.card p span {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.details-empty-state {
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.62);
+}
+
+@media (max-width: 900px) {
+  .repository-workspace {
+    grid-template-columns: 1fr;
+  }
+}

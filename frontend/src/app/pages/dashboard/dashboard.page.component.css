@@ -1,0 +1,341 @@
+.dashboard-page {
+  width: min(1240px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 36px 0 48px;
+}
+
+.dashboard-toast {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.dashboard-toast button {
+  border: 0;
+  background: transparent;
+  font-size: 18px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.dashboard-toast--success {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #065f46;
+}
+
+.dashboard-toast--error {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #991b1b;
+}
+
+.dashboard-toast--info {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1e40af;
+}
+
+.dashboard-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(320px, 0.95fr);
+  gap: 24px;
+  align-items: stretch;
+  margin-bottom: 24px;
+}
+
+.hero-copy,
+.hero-highlight,
+.stat-card,
+.dashboard-state-card,
+.dashboard-section,
+.dashboard-chart-section,
+.dashboard-chart-card {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+}
+
+.hero-copy {
+  border-radius: var(--radius-xl);
+  padding: 34px;
+}
+
+.hero-kicker,
+.section-kicker,
+.dashboard-state-eyebrow,
+.hero-highlight-label,
+.stat-label {
+  margin: 0 0 12px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.hero-copy h1,
+.section-heading h2 {
+  margin: 0;
+  font-size: clamp(2.25rem, 4vw, 4.2rem);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+}
+
+.hero-summary {
+  max-width: 54rem;
+  margin: 20px 0 0;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+.hero-highlight {
+  position: relative;
+  border-radius: var(--radius-xl);
+  padding: 28px;
+  background:
+    linear-gradient(180deg, rgba(255, 251, 235, 0.92), rgba(255, 253, 248, 0.96)), var(--surface);
+}
+
+.hero-highlight-github {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(120, 53, 15, 0.2);
+  background: rgba(255, 255, 255, 0.9);
+  color: #111827;
+}
+
+.hero-highlight-github svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.hero-highlight h2 {
+  margin: 0 0 12px;
+  font-size: 1.75rem;
+  line-height: 1.1;
+}
+
+.hero-highlight p {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+.hero-highlight-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.hero-highlight-meta span {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--border);
+  font-size: 0.92rem;
+  color: var(--text);
+}
+
+.hero-highlight--empty {
+  justify-content: center;
+}
+
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  border-radius: var(--radius-lg);
+  padding: 22px;
+}
+
+.stat-card strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: clamp(1.8rem, 3vw, 2.7rem);
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.stat-card p {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.dashboard-chart-section,
+.dashboard-section {
+  border-radius: var(--radius-xl);
+  padding: 28px;
+}
+
+.dashboard-chart-section {
+  margin-bottom: 28px;
+}
+
+.dashboard-chart-card {
+  border-radius: var(--radius-lg);
+  margin-top: 6px;
+  padding: 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(250, 245, 236, 0.82));
+}
+
+.dashboard-chart-wrap {
+  position: relative;
+  padding: 8px;
+  height: 420px;
+}
+
+.chart-placeholder {
+  position: absolute;
+  inset: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px dashed rgba(120, 53, 15, 0.2);
+}
+
+.chart-placeholder p {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: end;
+  margin-bottom: 22px;
+}
+
+.section-heading h2 {
+  font-size: clamp(1.5rem, 2vw, 2.2rem);
+}
+
+.section-note {
+  margin: 0;
+  color: var(--text-subtle);
+  white-space: nowrap;
+}
+
+.dashboard-grid-wrap {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 18px;
+}
+
+.dashboard-state-card {
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  text-align: center;
+}
+
+.dashboard-state-card h3 {
+  margin: 0 0 8px;
+  font-size: 1.45rem;
+}
+
+.dashboard-state-card p:last-child {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+@media (max-width: 1120px) {
+  .dashboard-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .section-heading {
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .section-note {
+    white-space: normal;
+  }
+}
+
+@media (max-width: 720px) {
+  .dashboard-page {
+    width: min(100% - 20px, 1240px);
+    padding: 20px 0 32px;
+  }
+
+  .dashboard-hero,
+  .dashboard-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-copy,
+  .hero-highlight,
+  .dashboard-section,
+  .dashboard-chart-section,
+  .stat-card,
+  .dashboard-state-card,
+  .dashboard-chart-card {
+    padding: 22px;
+  }
+
+  .section-heading {
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .section-note {
+    white-space: normal;
+  }
+
+  .hero-highlight-github {
+    top: 16px;
+    right: 16px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .dashboard-chart-wrap {
+    height: 340px;
+  }
+
+  .dashboard-grid-wrap {
+    max-height: none;
+    overflow: visible;
+    padding-right: 0;
+  }
+}

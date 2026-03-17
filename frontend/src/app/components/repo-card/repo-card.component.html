@@ -1,0 +1,54 @@
+<article class="repo-card" (click)="openRepository()">
+  <div class="repo-card-header">
+    <p class="repo-card-owner">{{ repo.owner }}</p>
+    <div class="repo-card-meta">
+      <span class="repo-card-language">{{ repo.language || 'Unspecified' }}</span>
+      <a
+        class="repo-card-github-link"
+        [href]="repo.repo_url"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Open repository on GitHub"
+        title="Open on GitHub"
+        (click)="openGithub($event)"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path
+            d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.18-3.37-1.18-.45-1.15-1.1-1.45-1.1-1.45-.9-.62.07-.6.07-.6 1 .08 1.52 1.02 1.52 1.02.88 1.52 2.3 1.08 2.86.83.09-.64.35-1.08.63-1.32-2.22-.25-4.56-1.1-4.56-4.93 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.28.1-2.66 0 0 .84-.27 2.75 1.02A9.5 9.5 0 0 1 12 6.8c.85 0 1.7.11 2.5.33 1.9-1.29 2.74-1.02 2.74-1.02.56 1.38.21 2.41.11 2.66.64.7 1.02 1.59 1.02 2.68 0 3.84-2.34 4.67-4.57 4.92.36.31.69.93.69 1.88v2.79c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"
+          />
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="repo-card-body">
+    <h3>{{ repo.full_name }}</h3>
+    <p class="repo-card-description">
+      {{ repo.description || 'No description available for this repository yet.' }}
+    </p>
+  </div>
+
+  <div class="repo-card-stats">
+    <div>
+      <span class="repo-card-stat-label">Stars</span>
+      <strong>{{ repo.stars }}</strong>
+    </div>
+    <div>
+      <span class="repo-card-stat-label">Forks</span>
+      <strong>{{ repo.forks }}</strong>
+    </div>
+    <div>
+      <span class="repo-card-stat-label">Watchers</span>
+      <strong>{{ repo.watchers }}</strong>
+    </div>
+    <div>
+      <span class="repo-card-stat-label">Open issues</span>
+      <strong>{{ repo.open_issues }}</strong>
+    </div>
+  </div>
+
+  <div class="repo-card-footer">
+    <span>Updated {{ repo.updated_at | date: 'mediumDate' }}</span>
+    <span class="repo-card-link">Open analytics</span>
+  </div>
+</article>
