@@ -7,6 +7,7 @@ import { Repo, RepoInsight, RepoContributor, AddRepositoryRequest } from '../mod
   providedIn: 'root',
 })
 export class RepoService {
+
   private readonly baseUrl = 'https://repository-intelligence-workspace.onrender.com/api';
 
   constructor(private readonly http: HttpClient) {}
