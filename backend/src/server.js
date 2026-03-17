@@ -3,6 +3,7 @@ import app from './app.js';
 import { testConnection } from './config/db.js';
 import { testRedisConnection } from './config/redis.js';
 import { startRepositorySyncJob } from './jobs/repositorySyncJob.js';
+import './workers/repoWorker.js'
 
 const PORT = process.env.PORT || 5050;
 
