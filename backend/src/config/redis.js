@@ -11,7 +11,26 @@ const redis = new Redis({
     tls: {},
     lazyConnect: true,
     maxRetriesPerRequest: null,
-    retryStrategy: () => null
+
+    retryStrategy(times) {
+        return Math.min(times * 200, 2000);
+    },
+
+    reconnectOnError() {
+        return true;
+    }
+});
+
+redis.on('connect', () => {
+    console.log('Redis connected successfully');
+});
+
+redis.on('error', (err) => {
+    console.error('Redis error:', err.message);
+});
+
+redis.on('close', () => {
+    console.warn('Redis connection closed, reconnecting...');
 });
 
 const validateRedisConfig = () => {
