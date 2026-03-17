@@ -6,6 +6,9 @@ const redisPort = Number.parseInt(process.env.REDIS_PORT || '6379', 10);
 const redis = new Redis({
     host: redisHost,
     port: redisPort,
+    username: process.env.REDIS_USER,
+    password: process.env.REDIS_PASSWORD,
+    tls: {},
     lazyConnect: true,
     maxRetriesPerRequest: null,
     retryStrategy: () => null
