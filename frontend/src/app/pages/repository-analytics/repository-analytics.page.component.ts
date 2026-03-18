@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, of, Subscription } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -12,7 +12,7 @@ import { RepoService } from '../../services/repo.service';
   templateUrl: './repository-analytics.page.component.html',
   styleUrls: ['./repository-analytics.page.component.css'],
 })
-export class RepositoryAnalyticsPageComponent implements OnInit, OnDestroy {
+export class RepositoryAnalyticsPageComponent implements OnInit, AfterViewChecked, OnDestroy {
   @ViewChild('insightsChart') insightsChartRef?: ElementRef<HTMLCanvasElement>;
 
   repository: Repo | null = null;
@@ -24,6 +24,7 @@ export class RepositoryAnalyticsPageComponent implements OnInit, OnDestroy {
 
   private chart: Chart | null = null;
   private routeSubscription?: Subscription;
+  private pendingChartRender = false;
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -42,6 +43,14 @@ export class RepositoryAnalyticsPageComponent implements OnInit, OnDestroy {
 
       this.loadRepositoryAnalytics(id);
     });
+  }
+
+
+  ngAfterViewChecked(): void {
+    if (this.pendingChartRender && this.insightsChartRef?.nativeElement && this.insight) {
+      this.pendingChartRender = false;
+      this.renderChart(this.insight);
+    }
   }
 
   get topContributor(): RepoContributor | null {
@@ -86,6 +95,7 @@ export class RepositoryAnalyticsPageComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.showAllContributors = false;
     this.insightsChartReady = false;
+    this.pendingChartRender = false;
 
     forkJoin({
       repository: this.repoService.getRepository(id),
@@ -99,7 +109,9 @@ export class RepositoryAnalyticsPageComponent implements OnInit, OnDestroy {
         this.loading = false;
 
         if (insight) {
-          setTimeout(() => this.renderChart(insight));
+          this.chart?.destroy();
+          this.chart = null;
+          this.pendingChartRender = true;
         } else {
           this.insightsChartReady = false;
           this.chart?.destroy();
