@@ -11,6 +11,10 @@ export interface Repo {
   language: string | null;
   open_issues: number;
   contributors_count: number;
+  recent_commits?: number;
+  pull_requests?: number;
+  language_count?: number;
+  dependency_count?: number;
   repo_url: string;
   created_at: string;
   updated_at: string;

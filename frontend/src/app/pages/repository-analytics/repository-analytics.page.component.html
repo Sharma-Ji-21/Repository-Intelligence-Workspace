@@ -26,7 +26,7 @@
       </div>
 
       <div class="analytics-summary-card">
-        <p class="analytics-eyebrow">Snapshot</p>
+        <p class="analytics-eyebrow">Repository Metrics</p>
         <div class="analytics-summary-grid">
           <div>
             <span>Stars</span>
@@ -37,12 +37,20 @@
             <strong>{{ repository.forks }}</strong>
           </div>
           <div>
-            <span>Watchers</span>
-            <strong>{{ repository.watchers }}</strong>
-          </div>
-          <div>
             <span>Open issues</span>
             <strong>{{ repository.open_issues }}</strong>
+          </div>
+          <div>
+            <span>Recent commits</span>
+            <strong>{{ repository.recent_commits ?? 0 }}</strong>
+          </div>
+          <div>
+            <span>Total pull requests</span>
+            <strong>{{ repository.pull_requests ?? 0 }}</strong>
+          </div>
+          <div>
+            <span>Contributors</span>
+            <strong>{{ repository.contributors_count ?? 0 }}</strong>
           </div>
         </div>
       </div>
@@ -61,10 +69,40 @@
         <span>Difficulty level</span>
         <strong>{{ insight?.difficultyLevel || 'Unavailable' }}</strong>
       </article>
-      <article class="insight-tile">
-        <span>Contributors</span>
-        <strong>{{ repository.contributors_count }}</strong>
-      </article>
+    </section>
+
+    <section class="score-explanation" aria-label="How repository scores are calculated">
+      <details class="score-explanation-details">
+        <summary class="score-explanation-toggle">Show how it's calculated</summary>
+
+        <div class="score-explanation-body">
+          <h3>How Scores Are Calculated</h3>
+
+          <div class="score-formula-card">
+            <h4>Activity Score</h4>
+            <p class="score-formula-text">
+              0.4 × Commits + 0.3 × PRs + 0.2 × Issues + 0.1 × Contributors
+            </p>
+            <p class="score-formula-description">
+              Activity score reflects how actively the repository is being developed.
+            </p>
+          </div>
+
+          <div class="score-formula-card">
+            <h4>Complexity Score</h4>
+            <p class="score-formula-text">
+              0.4 × Languages + 0.3 × Dependencies + 0.2 × Size + 0.1 × Topics
+            </p>
+            <p class="score-formula-description">
+              Complexity score reflects structural and technical complexity.
+            </p>
+          </div>
+
+          <p class="score-formula-note">
+            Scores are normalized indicators and not absolute measures.
+          </p>
+        </div>
+      </details>
     </section>
 
     <section class="analytics-content-grid">
@@ -72,7 +110,7 @@
         <div class="analytics-card-heading">
           <div>
             <p class="analytics-eyebrow">Comparative signal</p>
-            <h3>Activity v/s  complexity</h3>
+            <h3>Activity v/s complexity</h3>
           </div>
           <p class="analytics-card-note">Scores are normalized on a 0 to 100 scale.</p>
         </div>

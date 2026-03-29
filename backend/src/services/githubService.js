@@ -26,7 +26,9 @@ const normalizeRepository = (data) => ({
     open_issues: data.open_issues_count,
     repo_url: data.html_url,
     created_at: data.created_at,
-    updated_at: data.updated_at
+    updated_at: data.updated_at,
+    repo_size_kb: data.size,
+    topics: Array.isArray(data.topics) ? data.topics.length : 0
 });
 
 const normalizeContributors = (data) => data
@@ -57,6 +59,26 @@ const extractContributorsCount = (linkHeader, fallbackCount) => {
     }
 
     return lastPage * 10;
+};
+
+const extractPullRequestsCount = (linkHeader, fallbackCount) => {
+    if (!linkHeader) {
+        return fallbackCount;
+    }
+
+    const lastMatch = linkHeader.match(/<[^>]*[?&]page=(\d+)[^>]*>;\s*rel="last"/);
+
+    if (!lastMatch) {
+        return fallbackCount;
+    }
+
+    const lastPage = Number.parseInt(lastMatch[1], 10);
+
+    if (Number.isNaN(lastPage)) {
+        return fallbackCount;
+    }
+
+    return lastPage;
 };
 
 const handleGithubApiError = (error, owner, repo) => {
@@ -110,7 +132,9 @@ const fetchRepositoryContributors = async (owner, repo) => {
             contributorsCount
         };
     } catch (error) {
-        handleGithubApiError(error, owner, repo);
+        if (error?.response?.status === 404) {
+            handleGithubApiError(error, owner, repo);
+        }
         return {
             contributors: [],
             contributorsCount: 0
@@ -118,4 +142,79 @@ const fetchRepositoryContributors = async (owner, repo) => {
     }
 };
 
-export { fetchRepository, fetchRepositoryContributors };
+const fetchRecentCommits = async (owner, repo) => {
+    try {
+        const since = new Date();
+        since.setDate(since.getDate() - 90);
+
+        const { data } = await githubClient.get(
+            `/repos/${owner}/${repo}/commits`,
+            {
+                params: {
+                    since: since.toISOString(),
+                    per_page: 100
+                }
+            }
+        );
+
+        return Array.isArray(data) ? data.length : 0;
+    } catch {
+        return 0;
+    }
+};
+
+const fetchPullRequests = async (owner, repo) => {
+    try {
+        const { data, headers } = await githubClient.get(
+            `/repos/${owner}/${repo}/pulls`,
+            {
+                params: {
+                    state: 'all',
+                    per_page: 1
+                }
+            }
+        );
+
+        return extractPullRequestsCount(headers?.link || null, Array.isArray(data) ? data.length : 0);
+    } catch {
+        return 0;
+    }
+};
+
+const fetchLanguages = async (owner, repo) => {
+    try {
+        const { data } = await githubClient.get(`/repos/${owner}/${repo}/languages`);
+        return data && typeof data === 'object' ? Object.keys(data).length : 0;
+    } catch {
+        return 0;
+    }
+};
+
+const fetchDependencyCount = async (owner, repo) => {
+    try {
+        const { data } = await githubClient.get(`/repos/${owner}/${repo}/contents/package.json`);
+
+        if (!data?.content) {
+            return 0;
+        }
+
+        const content = Buffer.from(data.content, 'base64').toString();
+        const pkg = JSON.parse(content);
+
+        const dependencies = Object.keys(pkg.dependencies || {});
+        const devDependencies = Object.keys(pkg.devDependencies || {});
+
+        return dependencies.length + devDependencies.length;
+    } catch {
+        return 0;
+    }
+};
+
+export {
+    fetchRepository,
+    fetchRepositoryContributors,
+    fetchRecentCommits,
+    fetchPullRequests,
+    fetchLanguages,
+    fetchDependencyCount
+};

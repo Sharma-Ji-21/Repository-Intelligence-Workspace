@@ -109,7 +109,7 @@
 
 .analytics-summary-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
 }
 
@@ -135,7 +135,7 @@
 
 .analytics-insight-strip {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
   margin-bottom: 20px;
 }
@@ -152,6 +152,80 @@
   display: grid;
   grid-template-columns: minmax(0, 1.18fr) minmax(320px, 0.82fr);
   gap: 20px;
+}
+
+.score-explanation {
+  margin-bottom: 20px;
+}
+
+.score-explanation-details {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.score-explanation-toggle {
+  list-style: none;
+  cursor: pointer;
+  padding: 16px 20px;
+  font-family: 'IBM Plex Mono', monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: var(--accent);
+  border-bottom: 1px solid transparent;
+}
+
+.score-explanation-toggle::-webkit-details-marker {
+  display: none;
+}
+
+.score-explanation-details[open] .score-explanation-toggle {
+  border-bottom-color: var(--border);
+}
+
+.score-explanation-body {
+  padding: 20px;
+  display: grid;
+  gap: 14px;
+}
+
+.score-explanation-body h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  letter-spacing: -0.03em;
+}
+
+.score-formula-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: rgba(255, 251, 235, 0.76);
+  padding: 14px 16px;
+}
+
+.score-formula-card h4 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.score-formula-text {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.score-formula-description {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.score-formula-note {
+  margin: 2px 0 0;
+  color: var(--text-subtle);
+  font-size: 0.95rem;
 }
 
 .analytics-card-heading {
@@ -222,6 +296,10 @@
   .analytics-hero,
   .analytics-content-grid,
   .analytics-insight-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .analytics-summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

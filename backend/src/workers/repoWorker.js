@@ -4,7 +4,7 @@ import { redis } from '../config/redis.js';
 import { getRepositoryById, updateRepositoryStats, updateContributorCount } from '../models/repoModel.js';
 import { calculateActivityScore, calculateComplexityScore, classifyDifficulty } from '../services/analysisService.js';
 import { createInsight } from '../models/insightModel.js';
-import { fetchRepository, fetchRepositoryContributors } from '../services/githubService.js';
+import * as githubService from '../services/githubService.js';
 import { deleteContributorsByRepoId, createContributors } from '../models/contributorModel.js';
 import { deleteCache } from '../utils/cache.js';
 
@@ -21,12 +21,33 @@ const worker = new Worker(
             throw new Error(`Repository not found for id: ${repoId}`);
         }
 
-        const latestRepoData = await fetchRepository(repo.owner, repo.name);
+        const [
+            latestRepoData,
+            contributorData,
+            recentCommits,
+            pullRequests,
+            languageCount,
+            dependencyCount
+        ] = await Promise.all([
+            githubService.fetchRepository(repo.owner, repo.name),
+            githubService.fetchRepositoryContributors(repo.owner, repo.name),
+            githubService.fetchRecentCommits(repo.owner, repo.name),
+            githubService.fetchPullRequests(repo.owner, repo.name),
+            githubService.fetchLanguages(repo.owner, repo.name),
+            githubService.fetchDependencyCount(repo.owner, repo.name)
+        ]);
 
-        await updateRepositoryStats(repoId, latestRepoData);
+        const enrichedRepoData = {
+            ...latestRepoData,
+            contributors_count: contributorData.contributorsCount,
+            recent_commits: recentCommits,
+            pull_requests: pullRequests,
+            language_count: languageCount,
+            dependency_count: dependencyCount
+        };
+
+        await updateRepositoryStats(repoId, enrichedRepoData);
         await deleteCache(`repo:${repoId}`);
-
-        const contributorData = await fetchRepositoryContributors(repo.owner, repo.name);
 
         await updateContributorCount(repoId, contributorData.contributorsCount);
 
@@ -41,9 +62,9 @@ const worker = new Worker(
             `Stored ${contributorData.contributors.length} contributors for repository ${latestRepoData.full_name}`
         );
 
-        const { activityScore } = calculateActivityScore(latestRepoData);
-        const { complexityScore } = calculateComplexityScore(latestRepoData);
-        const { difficultyLevel } = classifyDifficulty(complexityScore);
+        const { activityScore } = calculateActivityScore(enrichedRepoData);
+        const { complexityScore } = calculateComplexityScore(enrichedRepoData);
+        const { difficultyLevel } = classifyDifficulty(activityScore, complexityScore);
 
         await createInsight(
             repoId,

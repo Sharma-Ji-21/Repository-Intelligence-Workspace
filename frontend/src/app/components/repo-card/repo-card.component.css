@@ -83,7 +83,7 @@
 
 .repo-card-stats {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 14px;
 }
 
@@ -98,6 +98,8 @@
   display: block;
   margin-bottom: 8px;
   color: var(--text-subtle);
+  letter-spacing: 0.08em;
+  line-height: 1.35;
 }
 
 .repo-card-stats strong {
@@ -115,6 +117,10 @@
 @media (max-width: 640px) {
   .repo-card {
     padding: 18px;
+  }
+
+  .repo-card-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .repo-card-header,

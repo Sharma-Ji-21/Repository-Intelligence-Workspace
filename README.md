@@ -1,74 +1,100 @@
 # GitHub Repository Analyzer (Full Stack)
 
-A full-stack application that tracks GitHub repositories, computes repository insights, and visualizes analytics in a modern dashboard.
+Full-stack repository intelligence platform for ingesting GitHub repositories, computing analytics asynchronously, and visualizing health signals in Angular dashboards.
 
-## Overview
+## 1. What This System Does
 
-This project contains:
+This project allows users to submit GitHub repository URLs and track them over time.
 
-- `backend/`: Express API with PostgreSQL + Redis + BullMQ worker.
-- `frontend/`: Angular dashboard with charts and analytics pages.
+Core capabilities:
 
-Core workflow:
+- Repository onboarding through a frontend form and backend validation pipeline.
+- GitHub metadata ingestion (repo info, contributors, commits, pull requests, languages, dependencies).
+- Async processing with BullMQ workers for reliable analytics computation.
+- Persistent storage in PostgreSQL for repositories, insights, and contributors.
+- Redis-backed caching for read-heavy API endpoints.
+- Scheduled and webhook-triggered refresh to keep analytics current.
 
-1. User submits a GitHub repository URL in the frontend.
-2. Backend validates URL, fetches repository details from GitHub, and stores data in PostgreSQL.
-3. Backend queues an analysis job in Redis/BullMQ.
-4. Worker computes activity/complexity/difficulty and syncs contributors.
-5. Frontend displays repository portfolio, charts, and contributor leaderboard.
-
-## Architecture
+## 2. High-Level Architecture
 
 ```text
-Angular Frontend (4200)
+Angular Frontend (port 4200)
         |
         v
-Express API (5050) ----> PostgreSQL (repositories, insights, contributors)
-        |
-        +----> Redis (cache + BullMQ queue)
-                        |
-                        v
-                 BullMQ Worker (analysis + sync)
+Express API (port 5050)
+   |            |
+   |            +--> Redis (cache + BullMQ connection)
+   |                         |
+   |                         v
+   |                   BullMQ Worker
+   |
+   +--> PostgreSQL (repositories, insights, contributors)
 
-GitHub API <-------------------------------- API/Worker
+GitHub REST API <------ API Service + Worker Service Calls
 ```
 
-## Repository Structure
+## 3. Repository Layout
 
 ```text
 C2si-org-Pregsoc/
 ├── backend/
 │   ├── src/
-│   │   ├── controllers/
-│   │   ├── services/
-│   │   ├── models/
-│   │   ├── routes/
-│   │   ├── workers/
-│   │   ├── queues/
-│   │   ├── jobs/
-│   │   └── ...
+│   │   ├── app.js / server.js
+│   │   ├── config/            (DB + Redis config)
+│   │   ├── controllers/       (HTTP handlers)
+│   │   ├── routes/            (API routes)
+│   │   ├── services/          (GitHub + scoring + orchestration)
+│   │   ├── models/            (SQL + DB access layer)
+│   │   ├── queues/            (BullMQ queue producer)
+│   │   ├── workers/           (BullMQ queue consumer)
+│   │   ├── jobs/              (hourly sync scheduler)
+│   │   ├── middlewares/       (validation + error handling)
+│   │   └── utils/             (cache + URL parsing)
 │   └── README.md
 ├── frontend/
 │   ├── src/app/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   └── models/
+│   │   ├── pages/             (dashboard, repository analytics)
+│   │   ├── components/        (repo card, contributor card, add form)
+│   │   ├── services/          (API client)
+│   │   └── models/            (frontend interfaces)
 │   └── README.md
 └── README.md
 ```
 
-## Prerequisites
+## 4. End-to-End Flow
 
-- Node.js (LTS recommended)
+1. User submits a repository URL on the dashboard.
+2. Backend validates URL format and parses owner/repo.
+3. Backend fetches repository details from GitHub and stores/updates PostgreSQL row.
+4. Backend enqueues analysis job (`repository-analysis`).
+5. Worker fetches latest GitHub metrics and contributors.
+6. Worker updates repository stats, contributor records, and insight snapshot.
+7. Worker invalidates Redis cache keys for changed data.
+8. Frontend requests repositories, insights, and contributors to render cards and charts.
+
+## 5. Analytics Model
+
+Current scoring model:
+
+- Activity Score:
+  - `0.4 * recent_commits + 0.3 * pull_requests + 0.2 * issues + 0.1 * contributors`
+- Complexity Score:
+  - `0.4 * language_count + 0.3 * dependency_count + 0.2 * (repo_size_kb / 10000) + 0.1 * topics`
+- Difficulty level:
+  - Based on weighted combination: `0.4 * activity + 0.6 * complexity`
+  - Bucketed to Beginner / Intermediate / Advanced
+
+## 6. Prerequisites
+
+- Node.js (LTS)
 - npm
 - PostgreSQL
 - Redis
-- GitHub Personal Access Token (recommended)
+- Optional but recommended: GitHub token for higher rate limits
 
-## Backend Setup
+## 7. Quick Start (Local)
 
-From project root:
+### Backend
 
 ```bash
 cd backend
@@ -76,34 +102,23 @@ npm install
 cp .env.example .env
 ```
 
-Update `.env` with your local PostgreSQL, Redis, and GitHub token values.
-
-Create database (example):
+Create database and run schema scripts:
 
 ```bash
 createdb github_repo_analyzer
-```
-
-Apply schemas:
-
-```bash
 psql -U <db_user> -d <db_name> -f src/models/schema.sql
 psql -U <db_user> -d <db_name> -f src/models/insightsSchema.sql
 psql -U <db_user> -d <db_name> -f src/models/contributorsSchema.sql
 ```
 
-Run backend server and worker in separate terminals:
+Start backend API and worker in separate terminals:
 
 ```bash
 npm run dev
 npm run worker
 ```
 
-Backend base URL: `http://localhost:5050`
-
-## Frontend Setup
-
-From project root:
+### Frontend
 
 ```bash
 cd frontend
@@ -111,9 +126,12 @@ npm install
 npm start
 ```
 
-Frontend URL: `http://localhost:4200`
+App URLs:
 
-## API Summary
+- Frontend: `http://localhost:4200`
+- Backend: `http://localhost:5050`
+
+## 8. API Surface
 
 - `GET /health`
 - `POST /api/repos`
@@ -123,49 +141,50 @@ Frontend URL: `http://localhost:4200`
 - `GET /api/repos/:id/contributors`
 - `POST /api/webhooks/github`
 
-Detailed request/response notes are in [backend/README.md](backend/README.md).
+See backend README for route-level behavior and caching details.
 
-## Frontend Pages
+## 9. Operations and Background Processing
 
-- `/dashboard`
-  - Add repository
-  - Portfolio cards
-  - Scatter chart (activity vs complexity)
-  - Repository grid
-- `/repository/:id`
-  - Repository snapshot
-  - Insight bar chart
-  - Contributor leaderboard
+- Queue name: `repository-analysis`
+- Worker process: pulls queued jobs and computes analytics
+- Cron sync: every hour (`0 * * * *`) queues all tracked repositories
+- Cache keys invalidated on write-path updates:
+  - `repos:list`
+  - `repo:{id}`
+  - `repo:{id}:insights`
+  - `repo:{id}:contributors`
 
-Detailed UI/component mapping is in [frontend/README.md](frontend/README.md).
+## 10. Common Development Workflow
 
-## Background Jobs and Sync
+1. Start DB and Redis.
+2. Start backend API.
+3. Start worker.
+4. Start frontend.
+5. Add repo from dashboard.
+6. Validate queue + worker logs.
+7. Validate insights and contributors appear in UI.
 
-- Queue: `repository-analysis`
-- Worker updates:
-  - latest repo stats
-  - contributor list and count
-  - repository insight snapshot
-- Cron job runs hourly and re-queues all tracked repositories.
+## 11. Troubleshooting
 
-## Local Development Order
+- Backend startup fails:
+  - Check DB env vars and DB reachability.
+- Redis connection issues:
+  - Check host/port/credentials and service status.
+- Insights not appearing:
+  - Verify worker is running and queue jobs are processing.
+- GitHub rate-limit responses:
+  - Configure `GITHUB_TOKEN`.
+- Contributor/dependency metrics are zero:
+  - Repository may not expose those resources, or file/language ecosystem may differ.
 
-1. Start PostgreSQL.
-2. Start Redis.
-3. Start backend API (`npm run dev`).
-4. Start backend worker (`npm run worker`).
-5. Start frontend (`npm start`).
-6. Add a repository from dashboard and verify charts/contributors populate.
+## 12. Security and Reliability Notes
 
-## Troubleshooting
+- Do not commit real secrets.
+- Keep `.env` local and use templates for safe defaults.
+- Consider adding webhook signature verification for production exposure.
+- Caching is intentionally short-lived (120s) to balance freshness and performance.
 
-- `Database connection failed`: verify DB host/port/user/password/name.
-- `Redis connection failed`: verify Redis host/port and Redis service is running.
-- GitHub rate-limit errors: set `GITHUB_TOKEN` in backend `.env`.
-- No insights shown initially: wait for worker job completion.
+## 13. Documentation Map
 
-## Security Notes
-
-- Never commit real secrets in `.env`.
-- Use `.env.example` as the safe template.
-- Use webhook signature verification for production hardening (if exposing webhook endpoint publicly).
+- Backend implementation and API details: `backend/README.md`
+- Frontend architecture and UI behavior: `frontend/README.md`

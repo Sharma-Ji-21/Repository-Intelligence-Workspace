@@ -38,12 +38,20 @@
       <strong>{{ repo.forks }}</strong>
     </div>
     <div>
-      <span class="repo-card-stat-label">Watchers</span>
-      <strong>{{ repo.watchers }}</strong>
-    </div>
-    <div>
       <span class="repo-card-stat-label">Open issues</span>
       <strong>{{ repo.open_issues }}</strong>
+    </div>
+    <div>
+      <span class="repo-card-stat-label">Recent commits</span>
+      <strong>{{ repo.recent_commits ?? 0 }}</strong>
+    </div>
+    <div>
+      <span class="repo-card-stat-label">Total pull requests</span>
+      <strong>{{ repo.pull_requests ?? 0 }}</strong>
+    </div>
+    <div>
+      <span class="repo-card-stat-label">Contributors</span>
+      <strong>{{ repo.contributors_count ?? 0 }}</strong>
     </div>
   </div>
 

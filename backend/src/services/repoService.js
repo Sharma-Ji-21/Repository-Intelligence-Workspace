@@ -1,4 +1,11 @@
-import { fetchRepository } from './githubService.js';
+import {
+    fetchRepository,
+    fetchRepositoryContributors,
+    fetchRecentCommits,
+    fetchPullRequests,
+    fetchLanguages,
+    fetchDependencyCount
+} from './githubService.js';
 import {
     createRepository,
     getAllRepositories as getAllReposFromDb,
@@ -22,7 +29,31 @@ const addRepository = async (repoUrl) => {
     }
 
     const repoData = await fetchRepository(owner, repo);
-    const saved = await createRepository(repoData);
+
+    const [
+        contributorsData,
+        recentCommits,
+        pullRequests,
+        languageCount,
+        dependencyCount
+    ] = await Promise.all([
+        fetchRepositoryContributors(owner, repo),
+        fetchRecentCommits(owner, repo),
+        fetchPullRequests(owner, repo),
+        fetchLanguages(owner, repo),
+        fetchDependencyCount(owner, repo)
+    ]);
+
+    const enrichedRepo = {
+        ...repoData,
+        contributors_count: contributorsData.contributorsCount,
+        recent_commits: recentCommits,
+        pull_requests: pullRequests,
+        language_count: languageCount,
+        dependency_count: dependencyCount
+    };
+
+    const saved = await createRepository(enrichedRepo);
     await enqueueRepositoryAnalysis(saved.id);
 
     console.log(`Repository added: ${saved.full_name}`);

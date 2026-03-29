@@ -10,6 +10,10 @@ CREATE TABLE IF NOT EXISTS repositories (
     watchers         INTEGER,
     language         TEXT,
     open_issues      INTEGER,
+    recent_commits   INTEGER DEFAULT 0,
+    pull_requests    INTEGER DEFAULT 0,
+    language_count   INTEGER DEFAULT 0,
+    dependency_count INTEGER DEFAULT 0,
     contributors_count INTEGER DEFAULT 0,
     repo_url         TEXT,
     created_at       TIMESTAMP,
@@ -22,3 +26,15 @@ CREATE INDEX IF NOT EXISTS idx_repositories_full_name  ON repositories (full_nam
 
 ALTER TABLE repositories
 ADD COLUMN IF NOT EXISTS contributors_count INTEGER DEFAULT 0;
+
+ALTER TABLE repositories
+ADD COLUMN IF NOT EXISTS recent_commits INTEGER DEFAULT 0;
+
+ALTER TABLE repositories
+ADD COLUMN IF NOT EXISTS pull_requests INTEGER DEFAULT 0;
+
+ALTER TABLE repositories
+ADD COLUMN IF NOT EXISTS language_count INTEGER DEFAULT 0;
+
+ALTER TABLE repositories
+ADD COLUMN IF NOT EXISTS dependency_count INTEGER DEFAULT 0;
